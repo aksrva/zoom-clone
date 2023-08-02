@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Conferencing</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="share__pop__up" id="share__pop">
+      <div id="share__link"></div>
+      <i id="copyBtn" class="fa-solid fa-copy"></i>
+    </div>
+    <div class="container">
+      <div class="video__section">
+        <div class="connected__user__video" id="all__videos"></div>
+        <div class="video__controller__section">
+          <div class="audio__video__controller">
+            <div class="audio__controller controller" id="audioBtn">
+              <i class="fa-solid fa-microphone"></i>
+            </div>
+            <div id="videoBtn" class="video__controller controller">
+              <i class="fa-solid fa-video"></i>
+            </div>
+            <div class="audio__controller controller" id="chat__btn">
+              <i class="fa-solid fa-comment"></i>
+            </div>
+          </div>
+          <div class="chat__hangup__controller">
+            <div class="share__controller controller share">
+              <i class="fa-solid fa-share" id="shareBtn"></i>
+            </div>
+            <div id="leaveBtn" class="call__controller controller leave">
+              <i class="fa-solid fa-phone-slash"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat__section" id="chat__box">
+        <div class="chat__messages" id="all__message__box">
+          <h2>Chat Box</h2>
+        </div>
+        <div class="type__message">
+          <input
+            type="text"
+            name="message"
+            id="chat__box__message"
+            placeholder="Write Message here..."
+          />
+          <i id="sendBtn" class="fa-solid fa-paper-plane"></i>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/brands.min.js"
+      integrity="sha512-KYlRezs7yAa59UnX6zAvY7I96Te02kycQn02Sr6FU/fBpxcXAwumRe5DHVrqVnWTt9HY/PktrAPZzSe9UE1Yxg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js.map"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const ROOM_ID = "<%= roomId %>";
+      const port = "<%= port %>";
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>
