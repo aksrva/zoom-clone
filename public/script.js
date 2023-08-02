@@ -10,17 +10,15 @@ const audioBtn = document.getElementById("audioBtn");
 chatBtn.addEventListener("click", () => {
   document.getElementById("chat__box").classList.toggle("show");
 });
-var uId;
 // Video calling
 const videoSection = document.getElementById("all__videos");
 const initialVideo = document.createElement("video");
-initialVideo.setAttribute("data-user", uId);
 initialVideo.muted;
 
 // Create Peer
 var peer = new Peer(undefined, {
   path: "/peerjs",
-  host: "/",
+  host: "https://zoom-clone-ak.up.railway.app/",
   port: port,
 });
 
@@ -42,7 +40,6 @@ navigator.mediaDevices
     peer.on("call", (call) => {
       call.answer(stream);
       const video = document.createElement("video");
-      video.setAttribute("data-user", uId);
       call.on("stream", (userVideoStream) => {
         buildVideoStream(video, userVideoStream);
       });
@@ -117,60 +114,17 @@ audioBtn.addEventListener("click", () => {
   audioMuteUnmute();
 });
 
-// Leave Call
-peer.on("call", (call) => {
-  getUserMedia(
-    {
-      video: true,
-      audio: true,
-    },
-    (stream) => {
-      call.answer(stream);
-      const video = document.createElement("video");
-      video.setAttribute("data-user", uId);
-      call.on("stream", (remoteStream) => {
-        buildVideoStream(video, remoteStream);
-      });
-    },
-    (err) => {
-      console.log("Failed to get Stream" + err);
-    }
-  );
-});
-
 peer.on("open", (id) => {
-  uId = id;
-  initialVideo.setAttribute("data-user", uId);
   socket.emit("join-room", ROOM_ID, id);
-});
-peer.on("close", (id) => {
-  socket.emit("disconnect", ROOM_ID, id);
 });
 
 const connectNewuser = (userId, stream) => {
   var call = peer.call(userId, stream);
-  activeConnections[userId] = call;
   const video = document.createElement("video");
   video.setAttribute("data-user", userId);
   call.on("stream", (userVideoStream) => {
     buildVideoStream(video, userVideoStream);
   });
-  call.on("close", () => {
-    video.pause();
-    video.remove();
-    socket.emit("user-disconnected", userId); // Broadcast to the server that user is disconnected
-    delete activeConnections[userId]; // Remove the call from activeConnections
-    adjustVideoLayout();
-  });
-};
-
-const adjustVideoLayout = () => {
-  const videos = document.querySelectorAll("video");
-  const totalConnectedUser = videos.length;
-
-  for (let idx = 0; idx < totalConnectedUser; idx++) {
-    videos[idx].style.width = 100 / totalConnectedUser - 10 + "%";
-  }
 };
 
 // pop up
