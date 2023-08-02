@@ -18,7 +18,7 @@ initialVideo.muted;
 // Create Peer
 var peer = new Peer(undefined, {
   path: "/peerjs",
-  host: "https://zoom-clone-ak.up.railway.app/",
+  host: "/",
   port: port,
 });
 
