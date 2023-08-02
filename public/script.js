@@ -15,7 +15,6 @@ const videoSection = document.getElementById("all__videos");
 const initialVideo = document.createElement("video");
 initialVideo.muted;
 
-// Create Peer
 var peer = new Peer(undefined, {
   path: "/peerjs",
   host: "/",
@@ -23,7 +22,6 @@ var peer = new Peer(undefined, {
 });
 
 let initialVideoStream;
-var activeConnections = {};
 var getUserMedia =
   navigator.getUserMedia ||
   navigator.webkitGetUserMedia ||
@@ -114,6 +112,26 @@ audioBtn.addEventListener("click", () => {
   audioMuteUnmute();
 });
 
+// Leave Call
+peer.on("call", (call) => {
+  getUserMedia(
+    {
+      video: true,
+      audio: true,
+    },
+    (stream) => {
+      call.answer(stream);
+      const video = document.createElement("video");
+      call.on("stream", (remoteStream) => {
+        buildVideoStream(video, remoteStream);
+      });
+    },
+    (err) => {
+      console.log("Failed to get Stream" + err);
+    }
+  );
+});
+
 peer.on("open", (id) => {
   socket.emit("join-room", ROOM_ID, id);
 });
@@ -121,7 +139,6 @@ peer.on("open", (id) => {
 const connectNewuser = (userId, stream) => {
   var call = peer.call(userId, stream);
   const video = document.createElement("video");
-  video.setAttribute("data-user", userId);
   call.on("stream", (userVideoStream) => {
     buildVideoStream(video, userVideoStream);
   });
