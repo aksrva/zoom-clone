@@ -18,7 +18,6 @@ initialVideo.setAttribute("data-user", uId);
 initialVideo.muted;
 
 // Create Peer
-console.log("PORT" + port);
 var peer = new Peer(undefined, {
   path: "/peerjs",
   host: "/",
@@ -141,7 +140,7 @@ peer.on("call", (call) => {
 
 peer.on("open", (id) => {
   uId = id;
-  initialVideo.setAttribute("data-user", uId); // Set the attribute here
+  initialVideo.setAttribute("data-user", uId);
   socket.emit("join-room", ROOM_ID, id);
 });
 peer.on("close", (id) => {
@@ -152,20 +151,15 @@ const connectNewuser = (userId, stream) => {
   var call = peer.call(userId, stream);
   activeConnections[userId] = call;
   const video = document.createElement("video");
-  video.setAttribute("data-user", userId); // Use userId instead of uId
+  video.setAttribute("data-user", userId);
   call.on("stream", (userVideoStream) => {
     buildVideoStream(video, userVideoStream);
   });
   call.on("close", () => {
     video.pause();
-
-    // Remove the disconnected user's video element
     video.remove();
-
-    // Broadcast the disconnection event to all connected users
-    socket.emit("user-disconnected", userId);
-
-    // Adjust layout for the remaining videos
+    socket.emit("user-disconnected", userId); // Broadcast to the server that user is disconnected
+    delete activeConnections[userId]; // Remove the call from activeConnections
     adjustVideoLayout();
   });
 };

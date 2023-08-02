@@ -4,7 +4,6 @@ const server = require("http").Server(app);
 const PORT = process.env.PORT || 3001;
 const { v4: uuidv4 } = require("uuid");
 const { ExpressPeerServer } = require("peer");
-const { SocketAddress } = require("net");
 const peerServer = ExpressPeerServer(server, {
   debug: true,
 });
@@ -20,6 +19,7 @@ app.get("/", (req, res) => {
 app.get("/:room", (req, res) => {
   res.render("room", { roomId: req.params.room, port: PORT });
 });
+
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId) => {
     socket.join(roomId);
@@ -28,11 +28,12 @@ io.on("connection", (socket) => {
       io.to(roomId).emit("createMessage", message);
     });
   });
+
   socket.on("disconnect", () => {
-    socket.broadcast.emit("user:disconnect", socket.id);
+    io.emit("user-disconnected", socket.id); // Changed event name to "user-disconnected"
   });
 });
 
 server.listen(PORT, () => {
-  console.log("Server is started");
+  console.log(`Server is started on port ${PORT}`);
 });
